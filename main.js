@@ -6,6 +6,7 @@ async function loadData() {
     return data;
 }
 
+// TODO: need to sort this by Month name, and not by value of counts
 function countSongs(data) {
     const songCounts = new Array(12).fill(0);
 
@@ -83,6 +84,7 @@ function renderGraph(data) {
                 .attr("transform", "translate(0, 0)");
         });
 
+    // TODO: need to add slice labeling
 
 }
 
