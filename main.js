@@ -1,11 +1,27 @@
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm';
 
-// Placeholder data
-const data = [
-    { label: "A", data: 30 },
-    { label: "B", data: 20 },
-    { label: "C", data: 15 }
-];
+async function loadData() {
+    const dataset = await d3.csv("./data/spotify-2023.csv");
+    const data = dataset.map(row => ({ month: Number(row["released_month"]) }));
+    return data;
+}
+
+function countSongs(data) {
+    const songCounts = new Array(12).fill(0);
+
+    for (const row of data) {
+        const month = row.month;
+        if (month >= 1 && month <= 12) {
+            // Subtract 1 to match month to index
+            songCounts[month - 1]++;
+        }
+    }
+    const monthArr = songCounts.map((count, i) => ({
+        month: i + 1,
+        count: count
+    }));
+    return monthArr;
+}
 
 function renderGraph(data) {
     const width = 1000;
@@ -35,21 +51,46 @@ function renderGraph(data) {
         .attr('transform', `translate(${usableArea.left + usableArea.width / 2}, ${usableArea.top + usableArea.height / 2})`)
 
     // Settings for the pie chart
-    // Slices stores the data and arc visualizes the data on the svg
-    const pie = d3.pie().value(d => d.data);
+    const pie = d3.pie().value(d => d.count);
     const radius = width / 2;
-    const color = d3.schemeSet1;
+    // Add more colors as needed
+    const color = d3.schemeCategory10.concat(["#f5f5f7", "#7018a8ff"]);
     const slices = pie(data);
     const arc = d3.arc().innerRadius(0).outerRadius(radius);
 
     // Draws the content
-    container.selectAll('path')
+    container.selectAll("path")
         .data(slices)
-        .join('path')
-        .attr('d', arc)
-        .attr('fill', (d, i) => color[i])
-        .attr('stroke', 'black')
-        .attr('stroke-width', 1);
+        .enter()
+        .append("path")
+        .attr("d", arc)
+        .attr("fill", (d, i) => color[i])
+        .attr("stroke", "black")
+        .attr("stroke-width", 2)
+        .on("mouseover", function (event, d) {
+            const centroid = arc.centroid(d);
+            const x = centroid[0];
+            const y = centroid[1];
+            d3.select(this)
+                .transition()
+                .duration(200)
+                .attr("transform", "translate(" + (x * 0.08) + ", " + (y * 0.08) + ")");
+        })
+        .on("mouseout", function () {
+            d3.select(this)
+                .transition()
+                .duration(300)
+                .attr("transform", "translate(0, 0)");
+        });
+
+
 }
 
-renderGraph(data)
+const data = await loadData();
+const monthView = countSongs(data);
+
+// This is will need to be in a function to change the parameters and show
+// different visualizations based on the interactive portal
+renderGraph(monthView);
+
+
