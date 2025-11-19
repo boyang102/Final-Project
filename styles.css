@@ -43,3 +43,114 @@ ul {
   list-style-type: none;
   padding-left: 0;
 }
+
+/* === Dashboard layout for pie + overview + radar === */
+
+.dashboard {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    margin-top: 1rem;
+}
+
+.dashboard-left,
+.dashboard-right {
+    flex: 1;
+}
+
+/* Month overview panel */
+
+#month-summary {
+    background-color: #2A2A2C;
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    text-align: left;
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.45);
+    min-height: 160px;
+    transition: opacity 0.2s ease;
+}
+
+#month-summary h3 {
+    margin-top: 0;
+    margin-bottom: 0.4rem;
+}
+
+#month-summary .summary-subtitle {
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+    color: #c7c7cc;
+}
+
+#month-summary .summary-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.4rem 1.2rem;
+    font-size: 0.9rem;
+}
+
+#month-summary .summary-highlight {
+    margin-top: 0.9rem;
+    font-size: 0.9rem;
+}
+
+/* Pie slice styling */
+
+.slice {
+    cursor: pointer;
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+}
+
+.slice:hover {
+    opacity: 1;
+}
+
+.slice.selected {
+    stroke: #ffffff;
+    stroke-width: 3px;
+    opacity: 1;
+}
+
+/* Radar chart */
+
+#radar-chart {
+    margin-top: 1.5rem;
+}
+
+#radar-chart svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.radar-grid {
+    fill: none;
+    stroke: #3A3A3C;
+    stroke-width: 0.5px;
+}
+
+.radar-grid-label {
+    fill: #8e8e93;
+    font-size: 0.7rem;
+}
+
+.radar-axis {
+    stroke: #3A3A3C;
+    stroke-width: 0.5px;
+}
+
+.radar-axis-label {
+    fill: #f5f5f7;
+    font-size: 0.75rem;
+}
+
+.radar-overall {
+    fill: rgba(255, 255, 255, 0.05);
+    stroke: #9b9b9b;
+    stroke-width: 1.5px;
+}
+
+.radar-month {
+    fill: rgba(79, 140, 255, 0.4);
+    stroke: #b3c6ff;
+    stroke-width: 2px;
+}
