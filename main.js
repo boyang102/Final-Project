@@ -4,6 +4,8 @@ let allSongs = [];
 let compareMode = false;
 let selectedMonths = [];
 
+/* ------------------------------- LOAD DATA ------------------------------ */
+
 async function loadData() {
     const dataset = await d3.csv("./data/spotify-2023.csv", d => ({
         track: d["track_name"],
@@ -31,7 +33,7 @@ function countSongs(data) {
     }));
 }
 
-//metric computation
+/* ---------------------------- COMPUTE STATS ----------------------------- */
 
 function computeStats(songs) {
     return {
@@ -45,13 +47,13 @@ function computeStats(songs) {
     };
 }
 
-//pie chart
+/* ---------------------------- PIE CHART ---------------------------- */
 
 function renderGraph(data) {
     const width = 1000, height = 1000;
     const svg = d3.select('#chart')
         .append('svg')
-        .attr('viewBox', `-150 -150 ${width + 300} ${height + 300}`) 
+        .attr('viewBox', `-150 -150 ${width + 300} ${height + 300}`)
         .style('width', '100%');
 
     const container = svg.append('g')
@@ -64,7 +66,6 @@ function renderGraph(data) {
     const arc = d3.arc().innerRadius(0).outerRadius(radius);
     const color = d3.schemeTableau10;
 
-    // Draw pie slices
     container.selectAll("path")
         .data(slices)
         .enter()
@@ -76,11 +77,7 @@ function renderGraph(data) {
         .style("cursor", "pointer")
         .on("click", (event, d) => handleMonthClick(d.data.month));
 
-    // --- Add Month Labels ---
-    const monthNames = [
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ];
+    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
     const labelArc = d3.arc()
         .innerRadius(radius * 0.93)
@@ -100,6 +97,7 @@ function renderGraph(data) {
         .text(d => monthNames[d.data.month - 1]);
 }
 
+/* ---------------------- CLICK LOGIC (COMPARISON MODE) ---------------------- */
 
 function handleMonthClick(month) {
     if (!compareMode) {
@@ -117,15 +115,12 @@ function handleMonthClick(month) {
 
     if (selectedMonths.length === 2) {
         d3.select("#compare-status").text(`Comparing: ${selectedMonths[0]} vs ${selectedMonths[1]}`);
-
-        // Clear old comparison overlays only
         radarGroup.selectAll(".compare-shape").remove();
-
         updateComparisonCharts(selectedMonths[0], selectedMonths[1]);
     }
 }
 
-//month comparison
+/* ------------------------- COMPARE MONTHS -------------------------- */
 
 function updateComparisonCharts(monthA, monthB) {
     const songsA = allSongs.filter(d => d.released_month === monthA);
@@ -151,106 +146,31 @@ function updateComparisonCharts(monthA, monthB) {
     renderLineComparison(monthA, monthB);
 }
 
-//line chart
-
-function renderLineComparison(monthA, monthB) {
-    d3.select("#compare-line").html("");
-
-    const container = d3.select("#compare-line")
-        .append("svg")
-        .attr("width", 600)
-        .attr("height", 350);
-
-    const features = ["danceability", "energy", "valence"];
-    const months = [monthA, monthB];
-
-    const stats = months.map(m => {
-        const songs = allSongs.filter(d => d.released_month === m);
-        return { month: m, ...computeStats(songs) };
-    });
-
-    const x = d3.scalePoint()
-        .domain(features)
-        .range([50, 550]);
-
-    const y = d3.scaleLinear().domain([0, 100]).range([300, 50]);
-
-    // axes
-    container.append("g").attr("transform", "translate(0,300)").call(d3.axisBottom(x));
-    container.append("g").attr("transform", "translate(50,0)").call(d3.axisLeft(y));
-
-    // lines
-    const line = d3.line()
-        .x(d => x(d.feature))
-        .y(d => y(d.value));
-
-    months.forEach((m, i) => {
-        const dataset = features.map(f => ({
-            feature: f,
-            value: stats[i][f]
-        }));
-
-        container.append("path")
-            .datum(dataset)
-            .attr("d", line)
-            .attr("stroke", i === 0 ? "#ff6384" : "#4f8cff")
-            .attr("stroke-width", 3)
-            .attr("fill", "none");
-    });
-}
-
-//summary
+/* ---------------------------- SUMMARY PANEL ---------------------------- */
 
 function updateMonthOverview(selectedMonth) {
     const container = d3.select("#month-summary");
 
-    if (!selectedMonth) {
-        container.html(`<h3>Select a month</h3><p>Click a slice to explore monthly stats.</p>`);
-        return;
-    }
-
-    // Filter songs from selected month
     const monthSongs = allSongs.filter(d => d.released_month === selectedMonth);
-
-    if (monthSongs.length === 0) {
-        container.html("<p>No data for this month.</p>");
-        return;
-    }
-
-    // Compute stats
     const avgStreams = d3.mean(monthSongs, d => d.streams);
     const totalStreams = d3.sum(monthSongs, d => d.streams);
-
-    const avgDance = d3.mean(monthSongs, d => d.danceability);
-    const avgEnergy = d3.mean(monthSongs, d => d.energy);
-    const avgValence = d3.mean(monthSongs, d => d.valence);
-
-    // Find top streamed song
-    const topSong = monthSongs.reduce((max, s) =>
-        s.streams > max.streams ? s : max
-    );
+    const topSong = monthSongs.reduce((max, s) => s.streams > max.streams ? s : max);
 
     const monthName = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        "January","February","March","April","May","June",
+        "July","August","September","October","November","December"
     ][selectedMonth - 1];
 
-    // Write panel HTML (FULL FORMAT)
     container.html(`
         <h3>${monthName}</h3>
         <div><strong>${monthSongs.length}</strong> songs released</div>
-        <div><strong>${(totalStreams/1e6).toFixed(1)}M</strong> total streams</div>
-        <div>Avg streams: <strong>${(avgStreams/1e6).toFixed(1)}M</strong></div>
-        <div>Avg danceability: <strong>${avgDance.toFixed(0)}</strong></div>
-        <div>Avg energy: <strong>${avgEnergy.toFixed(0)}</strong></div>
-        <div>Avg valence: <strong>${avgValence.toFixed(0)}</strong></div>
-        <br>
+        <div><strong>${(totalStreams / 1e6).toFixed(1)}M</strong> total streams</div>
+        <div>Avg streams: <strong>${(avgStreams / 1e6).toFixed(1)}M</strong></div>
         <div><strong>Top song:</strong> ${topSong.track} – ${topSong.artist}</div>
     `);
 }
 
-
-//radar chart
+/* ---------------------------- RADAR CHART ---------------------------- */
 
 let radarSvg, radarGroup;
 const radarSize = 400, radarRadius = 160;
@@ -264,7 +184,6 @@ function initRadarChart() {
     radarGroup = radarSvg.append("g")
         .attr("transform", `translate(${radarSize/2}, ${radarSize/2})`);
 
-    // Restoring original background grid
     const levels = [25, 50, 75, 100];
     levels.forEach(level => {
         radarGroup.append("circle")
@@ -274,11 +193,7 @@ function initRadarChart() {
             .attr("stroke-width", 0.7);
     });
 
-    const features = [
-        "Dance", "Energy", "Valence", "Acoustic",
-        "Instr.", "Liveness", "Speech"
-    ];
-
+    const features = ["Dance","Energy","Valence","Acoustic","Instr.","Liveness","Speech"];
     features.forEach((feat, i) => {
         const angle = (Math.PI * 2) / features.length;
         const x = Math.cos(i * angle - Math.PI/2) * (radarRadius + 12);
@@ -318,7 +233,6 @@ function updateRadarChart(selectedMonth) {
     const songs = allSongs.filter(d => d.released_month === selectedMonth);
     const stats = computeStats(songs);
 
-    // Clear only month shape, not grid/labels
     radarGroup.selectAll(".month-shape").remove();
 
     radarGroup.append("path")
@@ -329,6 +243,7 @@ function updateRadarChart(selectedMonth) {
         .attr("stroke-width", 2);
 }
 
+/* ---------------------------- INIT ---------------------------- */
 
 allSongs = await loadData();
 renderGraph(countSongs(allSongs));
