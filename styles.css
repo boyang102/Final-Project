@@ -17,11 +17,11 @@ h2 {
     font-size: 1.5em;
 }
 
-.graphtitle{
+.graphtitle {
     margin-top: 100px;
 }
 
-.reflection{
+.reflection {
     margin-top: 200px;
 }
 
@@ -40,8 +40,8 @@ h2 {
 }
 
 ul {
-  list-style-type: none;
-  padding-left: 0;
+    list-style-type: none;
+    padding-left: 0;
 }
 
 /* === Dashboard layout for pie + overview + radar === */
@@ -155,4 +155,10 @@ ul {
     fill: rgba(79, 140, 255, 0.4);
     stroke: #b3c6ff;
     stroke-width: 2px;
+}
+
+#lineplot {
+    aspect-ratio: 3 / 2;
+    margin-top: 4em;
+    margin-left: 4em;
 }

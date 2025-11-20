@@ -335,6 +335,62 @@ function updateRadarChart(selectedMonth) {
         .attr("d", path);
 }
 
+
+function renderLinePlot() {
+    const width = 1350;
+    const height = 800;
+
+    const margin = { top: 10, right: 200, bottom: 80, left: 80 };
+    const usableArea = {
+        top: margin.top,
+        left: margin.left,
+        right: width - margin.right,
+        bottom: height - margin.bottom,
+        width: width - margin.left - margin.right,
+        height: height - margin.top - margin.bottom,
+    };
+
+    const svg = d3.select('#lineplot')
+        .append('svg')
+        .attr('viewBox', `0 0 ${width} ${height}`)
+        .attr('preserveAspectRatio', 'xMinYMin')
+        .style('overflow', 'visible');
+
+    const xScale = d3.scaleLinear().domain([0, 12]).range([usableArea.left, usableArea.right]);
+    const yScale = d3.scaleLinear().domain([0, 100]).range([usableArea.bottom, usableArea.top]);
+
+    const gridlines = svg.append('g').attr('class', 'gridlines').attr('transform', `translate(${usableArea.left}, 0)`);
+    gridlines.call(d3.axisLeft(yScale).tickFormat('').tickSize(-usableArea.width));
+
+    const xAxisGroup = svg.append('g')
+        .attr('class', 'x-axis')
+        .attr('transform', `translate(0, ${usableArea.bottom})`)
+        .call(d3.axisBottom(xScale).ticks(12));
+    const yAxisGroup = svg.append('g')
+        .attr('class', 'y-axis')
+        .attr('transform', `translate(${usableArea.left}, 0)`)
+        .call(d3.axisLeft(yScale));
+
+    svg.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('x', (usableArea.left + usableArea.right) / 2)
+        .attr('y', height - 30)
+        .style('font-family', 'Roboto')
+        .style('font-size', '16px')
+        .text('X Axis');
+
+    svg.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('transform', 'rotate(-90)')
+        .attr('x', -(usableArea.top + usableArea.bottom) / 2)
+        .attr('y', usableArea.left - 60)
+        .style('font-family', 'Roboto')
+        .style('font-size', '16px')
+        .text('Y Axis');
+
+    return { svg, usableArea, xScale, yScale, xAxisGroup, yAxisGroup, legendGroup };
+}
+
 allSongs = await loadData();
 const monthView = countSongs(allSongs);
 
@@ -344,6 +400,7 @@ updateMonthOverview(null); // show nothing at start
 // This is will need to be in a function to change the parameters and show
 // different visualizations based on the interactive portal
 renderGraph(monthView);
+renderLinePlot();
 
 
 
