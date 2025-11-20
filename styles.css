@@ -11,19 +11,23 @@ h1 {
     font-size: 2em;
     text-align: center;
     margin-top: 40px;
+    margin-bottom: 10px;
 }
 
 h2 {
     font-size: 1.5em;
+    margin-top: 20px;
 }
 
-.graphtitle{
+
+.graphtitle {
     margin-top: 100px;
 }
 
-.reflection{
+.reflection {
     margin-top: 200px;
 }
+
 
 .bodycolumns {
     display: flex;
@@ -40,60 +44,79 @@ h2 {
 }
 
 ul {
-  list-style-type: none;
-  padding-left: 0;
+    list-style-type: none;
+    padding-left: 0;
 }
 
-/* === Dashboard layout for pie + overview + radar === */
+
 
 .dashboard {
     display: flex;
-    gap: 2rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+    margin-top: 2.5rem;
+    width: 100%;
+}
+
+.chart-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     align-items: flex-start;
+    gap: 4rem;
+    width: 100%;
     margin-top: 1rem;
 }
 
-.dashboard-left,
-.dashboard-right {
-    flex: 1;
-}
-
-/* Month overview panel */
 
 #month-summary {
     background-color: #2A2A2C;
     border-radius: 14px;
-    padding: 1.25rem 1.5rem;
-    text-align: left;
+    padding: 2rem 3rem;
+    text-align: center;
     box-shadow: 0 0 16px rgba(0, 0, 0, 0.45);
     min-height: 160px;
-    transition: opacity 0.2s ease;
+    width: 70%;
+    margin: 0 auto;
+    transition: opacity 0.3s ease;
+    font-size: 1.1rem;
 }
 
 #month-summary h3 {
     margin-top: 0;
-    margin-bottom: 0.4rem;
-}
-
-#month-summary .summary-subtitle {
     margin-bottom: 0.8rem;
-    font-size: 0.95rem;
-    color: #c7c7cc;
+    font-size: 1.8rem;
 }
 
-#month-summary .summary-metrics {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.4rem 1.2rem;
-    font-size: 0.9rem;
+
+
+#chart svg,
+#radar-chart svg {
+    width: 450px !important;
+    height: auto;
+    margin: 0 auto;
 }
 
-#month-summary .summary-highlight {
-    margin-top: 0.9rem;
-    font-size: 0.9rem;
+
+
+.radar-grid {
+    fill: none;
+    stroke: #3A3A3C;
+    stroke-width: 0.5px;
 }
 
-/* Pie slice styling */
+.radar-axis-label {
+    fill: #f5f5f7;
+    font-size: 0.75rem;
+}
+
+.radar-month {
+    fill: rgba(79, 140, 255, 0.4);
+    stroke: #b3c6ff;
+    stroke-width: 2px;
+}
+
 
 .slice {
     cursor: pointer;
@@ -111,46 +134,20 @@ ul {
     opacity: 1;
 }
 
-/* Radar chart */
 
-#radar-chart {
-    margin-top: 1.5rem;
+.compare-controls {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: white;
 }
 
-#radar-chart svg {
-    max-width: 100%;
-    height: auto;
+#compare-status {
+    margin-top: 6px;
+    color: #9ecfff;
+    font-size: 0.95rem;
 }
 
-.radar-grid {
-    fill: none;
-    stroke: #3A3A3C;
-    stroke-width: 0.5px;
-}
 
-.radar-grid-label {
-    fill: #8e8e93;
-    font-size: 0.7rem;
-}
-
-.radar-axis {
-    stroke: #3A3A3C;
-    stroke-width: 0.5px;
-}
-
-.radar-axis-label {
-    fill: #f5f5f7;
-    font-size: 0.75rem;
-}
-
-.radar-overall {
-    fill: rgba(255, 255, 255, 0.05);
-    stroke: #9b9b9b;
-    stroke-width: 1.5px;
-}
-
-.radar-month {
-    fill: rgba(79, 140, 255, 0.4);
-    stroke: #b3c6ff;
-    stroke-width: 2px;
+#compare-line svg {
+    margin-top: 30px;
 }

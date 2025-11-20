@@ -15,6 +15,7 @@
       Popularity
     </h1>
     <hr />
+
     <div class="bodycolumns">
       <div class="leftcolumn">
         <h2>Team Members</h2>
@@ -31,22 +32,32 @@
         <p>Placeholder text here.</p>
       </div>
     </div>
+
     <h2 class="graphtitle">Interactive Graph</h2>
     <p>Releases by Months (click a slice to explore that month)</p>
+    
+    <div class="compare-controls">
+      <label>
+        <input type="checkbox" id="compare-toggle" />
+        Compare Months
+      </label>
+      <p id="compare-status"></p>
+    </div>
+
+
     <div class="dashboard">
-      <div class="dashboard-left">
-        <!-- Month releases pie chart -->
+
+      <div id="month-summary"></div>
+
+      <div class="chart-row">
         <div id="chart"></div>
-      </div>
-
-      <div class="dashboard-right">
-        <!-- Month overview text + stats -->
-        <div id="month-summary"></div>
-
-        <!-- Monthly audio profile radar chart -->
         <div id="radar-chart"></div>
       </div>
+
     </div>
+
+    <h2 style="margin-top:80px;">Monthly Comparison</h2>
+    <div id="compare-line"></div>
 
     <h2 class="reflection">Reflection</h2>
 
