@@ -61,12 +61,14 @@ ul {
 /* Month overview panel */
 
 #month-summary {
+    margin-inline: auto;
     background-color: #2A2A2C;
     border-radius: 14px;
     padding: 1.25rem 1.5rem;
-    text-align: left;
+    text-align: center;
     box-shadow: 0 0 16px rgba(0, 0, 0, 0.45);
     min-height: 160px;
+    max-width: 600px;
     transition: opacity 0.2s ease;
 }
 

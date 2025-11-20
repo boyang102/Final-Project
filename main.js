@@ -68,7 +68,7 @@ function countSongs(data) {
 function renderGraph(data) {
     const width = 1000;
     const height = 1000;
-    const margin = { top: 100, right: 0, bottom: 0, left: 0 };
+    const margin = { top: 400, right: 0, bottom: 0, left: 0 };
 
     const usableArea = {
         top: margin.top,
@@ -102,36 +102,36 @@ function renderGraph(data) {
 
     // Draws the content
     container.selectAll("path")
-    .data(slices)
-    .enter()
-    .append("path")
-    .attr("d", arc)
-    .attr("fill", (d, i) => color[i])
-    .attr("stroke", "black")
-    .attr("stroke-width", 2)
-    .on("mouseover", function (event, d) {
-        const centroid = arc.centroid(d);
-        const x = centroid[0];
-        const y = centroid[1];
-        d3.select(this)
-            .transition()
-            .duration(200)
-            .attr("transform", "translate(" + (x * 0.08) + ", " + (y * 0.08) + ")");
-    })
+        .data(slices)
+        .enter()
+        .append("path")
+        .attr("d", arc)
+        .attr("fill", (d, i) => color[i])
+        .attr("stroke", "black")
+        .attr("stroke-width", 2)
+        .on("mouseover", function (event, d) {
+            const centroid = arc.centroid(d);
+            const x = centroid[0];
+            const y = centroid[1];
+            d3.select(this)
+                .transition()
+                .duration(200)
+                .attr("transform", "translate(" + (x * 0.08) + ", " + (y * 0.08) + ")");
+        })
 
 
-    .on("mouseout", function () {
-        d3.select(this)
-            .transition()
-            .duration(300)
-            .attr("transform", "translate(0, 0)");
-    })
-    // click handler chained correctly, and "click" is lowercase
-    .on("click", function (event, d) {
-        const selectedMonth = d.data.month;
-        updateMonthOverview(selectedMonth);
-        updateRadarChart(selectedMonth);
-    });
+        .on("mouseout", function () {
+            d3.select(this)
+                .transition()
+                .duration(300)
+                .attr("transform", "translate(0, 0)");
+        })
+        // click handler chained correctly, and "click" is lowercase
+        .on("click", function (event, d) {
+            const selectedMonth = d.data.month;
+            updateMonthOverview(selectedMonth);
+            updateRadarChart(selectedMonth);
+        });
 
     // --- Add Month Labels ---
     const monthNames = [
@@ -202,8 +202,8 @@ function updateMonthOverview(selectedMonth) {
     container.html(`
         <h3>${monthName}</h3>
         <div><strong>${monthSongs.length}</strong> songs released</div>
-        <div><strong>${(totalStreams/1e6).toFixed(1)}M</strong> total streams</div>
-        <div>Avg streams: <strong>${(avgStreams/1e6).toFixed(1)}M</strong></div>
+        <div><strong>${(totalStreams / 1e6).toFixed(1)}M</strong> total streams</div>
+        <div>Avg streams: <strong>${(avgStreams / 1e6).toFixed(1)}M</strong></div>
         <div>Avg danceability: <strong>${avgDance.toFixed(0)}</strong></div>
         <div>Avg energy: <strong>${avgEnergy.toFixed(0)}</strong></div>
         <div>Avg valence: <strong>${avgValence.toFixed(0)}</strong></div>
@@ -214,17 +214,22 @@ function updateMonthOverview(selectedMonth) {
 
 // Radar chart config
 let radarSvg, radarGroup;
-const radarSize = 260;
-const radarRadius = 100;
+const radarSize = 420;
+const radarRadius = 200;
 
 function initRadarChart() {
+    const container = radarSize;
+    const margin = { top: 50, right: 0, bottom: 0, left: 0 };
     radarSvg = d3.select("#radar-chart")
         .append("svg")
-        .attr("width", radarSize)
-        .attr("height", radarSize);
+        .attr("viewBox", `0 0 ${container} ${container}`)
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .style("width", "50%")
+        .style("height", "auto")
+        .style("overflow", "visible");
 
     radarGroup = radarSvg.append("g")
-        .attr("transform", `translate(${radarSize/2}, ${radarSize/2})`);
+        .attr("transform", `translate(${radarSize / 2 + margin.left}, ${radarSize / 2 + margin.top})`);
 
     const levels = [25, 50, 75, 100];
 
@@ -245,8 +250,8 @@ function initRadarChart() {
 
     features.forEach((feat, i) => {
         const angle = (Math.PI * 2) / features.length;
-        const x = Math.cos(i * angle - Math.PI/2) * (radarRadius + 12);
-        const y = Math.sin(i * angle - Math.PI/2) * (radarRadius + 12);
+        const x = Math.cos(i * angle - Math.PI / 2) * (radarRadius + 12);
+        const y = Math.sin(i * angle - Math.PI / 2) * (radarRadius + 12);
 
         radarGroup.append("text")
             .attr("x", x)
@@ -273,7 +278,7 @@ function initRadarChart() {
         .attr("stroke", "#777")
         .attr("stroke-width", 1.2)
         .attr("fill", "rgba(200,200,200,0.15)");
-    }
+}
 
 // Convert stats → polygon path
 function radarPath(stats) {
@@ -300,8 +305,8 @@ function radarPath(stats) {
 
 function updateRadarChart(selectedMonth) {
     if (selectedMonth === null) {
-    return; // do nothing until a month is clicked
-}
+        return; // do nothing until a month is clicked
+    }
     const monthSongs = allSongs.filter(d => d.released_month === selectedMonth);
 
     const stats = {
@@ -339,5 +344,6 @@ updateMonthOverview(null); // show nothing at start
 // This is will need to be in a function to change the parameters and show
 // different visualizations based on the interactive portal
 renderGraph(monthView);
+
 
 
